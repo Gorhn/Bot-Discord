@@ -75,7 +75,7 @@ async def notificationEventCreate(event):
     if type(event_channel) == discord.channel.TextChannel:
       response = generateEventSummaryResponse(event)
       event_notifications[event.id] = await event_channel.send(content = response[0], embed = response[1])
-      await event_channel.create_thread(event.creator.display_name + " - " event.name, "Vous pouvez discuter de l'événement ici !", 1440, None, "Fil d'événement créé par le bot.", True, None)
+      await event_channel.create_thread(event.creator.display_name + " - " + event.name, "Vous pouvez discuter de l'événement ici !", 1440, None, "Fil d'événement créé par le bot.", True, None)
 
 # ---
 
