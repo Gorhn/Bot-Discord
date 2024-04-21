@@ -40,6 +40,7 @@ async def notificationEventCreate(event):
     if type(event_channel) == discord.channel.TextChannel:
       response = generateEventSummaryResponse(event)
       event_notifications[event.id] = await event_channel.send(content = response[0], embed = response[1])
+      await event_channel.create_thread(event.creator.display_name + " - " event.name, "Vous pouvez discuter de l'événement ici !", 1440, None, "Fil d'événement créé par le bot.", True, None)
 
 # ---
 
@@ -116,11 +117,11 @@ def generateEventSummaryResponse(event):
   if hasattr(event, "location") :
     date += "\n" + event.location
 
-  eventContent = "<@&" + str(event_role_id) + "> : Un nouvel événement a été créé par " + event.creator.display_name + "\n"
+  eventContent = "<@&" + str(event_role_id) + "> : Un nouvel événement a été créé par " + event.creator.display_name + " !\n"
 
   eventEmbed = discord.Embed(title = event.name, description = date, color = 0x00aa00)
   eventEmbed.add_field(name = " ", value = event.description, inline = False)
-  eventEmbed.add_field(name = " ", value = "Manifestez vous dans la rubrique événements en haut du serveur !", inline = False)
+  eventEmbed.add_field(name = " ", value = "Manifestez vous dans la rubrique événements en haut du serveur ou discutez-en dans le fil juste en dessous !", inline = False)
 
   return eventContent, eventEmbed
 
