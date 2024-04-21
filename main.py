@@ -61,11 +61,11 @@ async def coiffeurCheck(attackerMessage):
           if (attackerMessage.author.id in coiffeur_score):
             score = coiffeur_score[attackerMessage.author.id]
 
-          print("Current score for " + attackerMessage.author.display_name + " : " + score)
+          print("Current score for " + attackerMessage.author.display_name + " : " + str(score))
 
           score = score + 1
 
-          print("New score for " + attackerMessage.author.display_name + " : " + score)
+          print("New score for " + attackerMessage.author.display_name + " : " + str(score))
 
           coiffeur_score[attackerMessage.author.id] = score
           coiffeur_cooldowns[attackerMessage.author.id] = datetime.now()
