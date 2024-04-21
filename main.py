@@ -1,6 +1,7 @@
 import discord
-import time
 import locale
+import time
+from datetime import timedelta, datetime
 from keep_alive import keep_alive
 
 locale.setlocale(locale.LC_TIME, '')
@@ -43,27 +44,28 @@ async def coiffeurCheck(message):
   coiffeurDone = ("feur" in message.content.lower()) and (message.reference is not None) and ("quoi" in message.reference.content.lower())
   coiffeurAvailable = (coiffeur_cooldowns[message.author.id] is None) or (coiffeur_cooldowns[message.author.id] + timedelta(hours = 1) < datetime.now())
 
-  print("Coiffeur done = " + coiffeurDone)
-  print("Coiffeur available = " + coiffeurAvailable)
+  print("Coiffeur done = " + str(coiffeurDone))
+  print("Coiffeur available = " + str(coiffeurAvailable))
 
-  if (coiffeurDone and coiffeurAvailable) {
+  if (coiffeurDone and coiffeurAvailable):
     score = 0
-    if (coiffeur_score[message.author.id] is not None) {
+    if (coiffeur_score[message.author.id] is not None):
       score = coiffeur_score[message.author.id]
-    }
 
     print("Current score for " + message.author.display_name + " : " + score);
 
     score = score + 1
-    
+
     print("New score for " + message.author.display_name + " : " + score);
 
     coiffeur_score[message.author.id] = score
-    message.add_reaction(guild.get_emoji(coiffeur_emoji))
     coiffeur_cooldowns[message.author.id] = datetime.now()
 
-    print("Cooldown set to " + datetime.now())
-  }
+    guild = client.get_guild(guild_id)
+    if (guild is not None):
+      message.add_reaction(guild.get_emoji(coiffeur_emoji))
+
+    print("Cooldown set to " + str(datetime.now()))
 # ---
 
 async def notificationEventCreate(event):
@@ -75,7 +77,7 @@ async def notificationEventCreate(event):
     if type(event_channel) == discord.channel.TextChannel:
       response = generateEventSummaryResponse(event)
       event_notifications[event.id] = await event_channel.send(content = response[0], embed = response[1])
-      await event_channel.create_thread(event.creator.display_name + " - " + event.name, "Vous pouvez discuter de l'événement ici !", 1440, None, "Fil d'événement créé par le bot.", True, None)
+      await event_channel.create_thread(name = event.creator.display_name + " - " + event.name, message = event_notifications[event.id], auto_archive_duration = 1440, type = None, reason = "Fil d'événement créé par le bot.", invitable = True, slowmode_delay = None)
 
 # ---
 
@@ -96,7 +98,7 @@ async def notificationEventUpdate(event, user):
       else :
         print("c")
         event_notifications[event.id] = await event_channel.send(content = response[0], embed = response[1])
-        
+
 
 # ---
 
@@ -129,7 +131,7 @@ def generateEventDeletionResponse(event):
 
   if hasattr(event, "location") :
     date += "\n" + event.location
-    
+
   eventContent = "<@&" + str(event_role_id) + "> : L'événement de " + event.creator.display_name + " a été annulé. \n"
 
   eventEmbed = discord.Embed(title = "ANNULATION : " + event.name, description = date, color = 0xaa0000)
