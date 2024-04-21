@@ -40,32 +40,41 @@ async def on_message(message):
 
 # ---
 
-async def coiffeurCheck(message):
-  coiffeurDone = ("feur" in message.content.lower()) and (message.reference is not None) and ("quoi" in message.reference.content.lower())
-  coiffeurAvailable = (coiffeur_cooldowns[message.author.id] is None) or (coiffeur_cooldowns[message.author.id] + timedelta(hours = 1) < datetime.now())
-
-  print("Coiffeur done = " + str(coiffeurDone))
-  print("Coiffeur available = " + str(coiffeurAvailable))
-
-  if (coiffeurDone and coiffeurAvailable):
-    score = 0
-    if (coiffeur_score[message.author.id] is not None):
-      score = coiffeur_score[message.author.id]
-
-    print("Current score for " + message.author.display_name + " : " + score);
-
-    score = score + 1
-
-    print("New score for " + message.author.display_name + " : " + score);
-
-    coiffeur_score[message.author.id] = score
-    coiffeur_cooldowns[message.author.id] = datetime.now()
-
-    guild = client.get_guild(guild_id)
+async def coiffeurCheck(attackerMessage):
+  if (attackerMessage.reference is not None):
+    
+    guild = client.get_guild(attackerMessage.reference.guild_id)
     if (guild is not None):
-      message.add_reaction(guild.get_emoji(coiffeur_emoji))
 
-    print("Cooldown set to " + str(datetime.now()))
+      channel = guild.get_channel(attackerMessage.reference.channel_id)
+      if (channel is not None):
+
+        victimMessage = channel.fetch_message(attackerMessage.reference.message_id)
+        coiffeurDone = ("feur" in attackerMessage.content.lower()) and () and ("quoi" in victimMessage.content.lower())
+        coiffeurAvailable = (coiffeur_cooldowns[attackerMessage.author.id] is None) or (coiffeur_cooldowns[attackerMessage.author.id] + timedelta(hours = 1) < datetime.now())
+
+        print("Coiffeur done = " + str(coiffeurDone))
+        print("Coiffeur available = " + str(coiffeurAvailable))
+
+        if (coiffeurDone and coiffeurAvailable):
+          score = 0
+          if (coiffeur_score[attackerMessage.author.id] is not None):
+            score = coiffeur_score[attackerMessage.author.id]
+
+          print("Current score for " + attackerMessage.author.display_name + " : " + score);
+
+          score = score + 1
+
+          print("New score for " + attackerMessage.author.display_name + " : " + score);
+
+          coiffeur_score[attackerMessage.author.id] = score
+          coiffeur_cooldowns[attackerMessage.author.id] = datetime.now()
+
+          guild = client.get_guild(guild_id)
+          if (guild is not None):
+            attackerMessage.add_reaction(guild.get_emoji(coiffeur_emoji))
+
+        print("Cooldown set to " + str(datetime.now()))
 # ---
 
 async def notificationEventCreate(event):
