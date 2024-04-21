@@ -51,14 +51,14 @@ async def coiffeurCheck(attackerMessage):
 
         victimMessage = await channel.fetch_message(attackerMessage.reference.message_id)
         coiffeurDone = ("feur" in attackerMessage.content.lower()) and ("quoi" in victimMessage.content.lower())
-        coiffeurAvailable = (coiffeur_cooldowns[attackerMessage.author.id] is None) or (coiffeur_cooldowns[attackerMessage.author.id] + timedelta(hours = 1) < datetime.now())
+        coiffeurAvailable = (attackerMessage.author.id not in coiffeur_cooldowns) or (coiffeur_cooldowns[attackerMessage.author.id] + timedelta(hours = 1) < datetime.now())
 
         print("Coiffeur done = " + str(coiffeurDone))
         print("Coiffeur available = " + str(coiffeurAvailable))
 
         if (coiffeurDone and coiffeurAvailable):
           score = 0
-          if (coiffeur_score[attackerMessage.author.id] is not None):
+          if (attackerMessage.author.id in coiffeur_score):
             score = coiffeur_score[attackerMessage.author.id]
 
           print("Current score for " + attackerMessage.author.display_name + " : " + score)
@@ -99,14 +99,10 @@ async def notificationEventUpdate(event, user):
     if type(event_channel) == discord.channel.TextChannel:
       response = generateEventSummaryResponse(event)
 
-      print("a")
-      if event_notifications[event.id] is not None :
-        print("b")
-        print(event)
-        event_notifications[event.id] = await event_notifications[event.id].edit(content = response[0], embed = response[1], suppress = False)
-      else :
-        print("c")
+      if event.id in event_notifications :
         event_notifications[event.id] = await event_channel.send(content = response[0], embed = response[1])
+      else :
+        event_notifications[event.id] = await event_notifications[event.id].edit(content = response[0], embed = response[1], suppress = False)
 
 
 # ---
@@ -120,10 +116,10 @@ async def notificationEventDelete(event):
     if type(event_channel) == discord.channel.TextChannel:
       response = generateEventDeletionResponse(event)
 
-      if event_notifications[event.id] is not None :
-        event_notifications[event.id] = await event_notifications[event.id].edit(content = response[0], embed = response[1], suppress = False)
-      else :
+      if event.id in event_notifications :
         event_notifications[event.id] = await event_channel.send(content = response[0], embed = response[1])
+      else :
+        event_notifications[event.id] = await event_notifications[event.id].edit(content = response[0], embed = response[1], suppress = False)
 
   event_notifications.pop(event.id)
 
