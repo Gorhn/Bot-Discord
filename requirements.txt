@@ -1,3 +1,3 @@
-jinja2
+Jinja2==3.1.1
 PyYAML
-Flask==1.0.2
+Flask==2.0.3
