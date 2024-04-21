@@ -72,7 +72,7 @@ async def coiffeurCheck(attackerMessage):
 
           guild = client.get_guild(guild_id)
           if (guild is not None):
-            attackerMessage.add_reaction(guild.get_emoji(coiffeur_emoji))
+            await attackerMessage.add_reaction(guild.get_emoji(coiffeur_emoji))
 
         print("Cooldown set to " + str(datetime.now()))
 # ---
