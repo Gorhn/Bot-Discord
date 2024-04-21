@@ -42,15 +42,15 @@ async def on_message(message):
 
 async def coiffeurCheck(attackerMessage):
   if (attackerMessage.reference is not None):
-    
+
     guild = client.get_guild(attackerMessage.reference.guild_id)
     if (guild is not None):
 
       channel = guild.get_channel(attackerMessage.reference.channel_id)
-      if (channel is not None):
+      if (channel is not None and type(channel) == discord.channel.TextChannel):
 
-        victimMessage = channel.fetch_message(attackerMessage.reference.message_id)
-        coiffeurDone = ("feur" in attackerMessage.content.lower()) and () and ("quoi" in victimMessage.content.lower())
+        victimMessage = await channel.fetch_message(attackerMessage.reference.message_id)
+        coiffeurDone = ("feur" in attackerMessage.content.lower()) and ("quoi" in victimMessage.content.lower())
         coiffeurAvailable = (coiffeur_cooldowns[attackerMessage.author.id] is None) or (coiffeur_cooldowns[attackerMessage.author.id] + timedelta(hours = 1) < datetime.now())
 
         print("Coiffeur done = " + str(coiffeurDone))
@@ -61,11 +61,11 @@ async def coiffeurCheck(attackerMessage):
           if (coiffeur_score[attackerMessage.author.id] is not None):
             score = coiffeur_score[attackerMessage.author.id]
 
-          print("Current score for " + attackerMessage.author.display_name + " : " + score);
+          print("Current score for " + attackerMessage.author.display_name + " : " + score)
 
           score = score + 1
 
-          print("New score for " + attackerMessage.author.display_name + " : " + score);
+          print("New score for " + attackerMessage.author.display_name + " : " + score)
 
           coiffeur_score[attackerMessage.author.id] = score
           coiffeur_cooldowns[attackerMessage.author.id] = datetime.now()
