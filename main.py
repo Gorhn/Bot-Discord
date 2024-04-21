@@ -14,8 +14,12 @@ client = discord.Client(intents=intents)
 guild_id = 1046389103266107404
 event_channel_id = 1228670607789395978
 event_role_id = 1228266794503114805
+coiffeur_emoji = 1231603611864137768
 
 event_notifications = { }
+
+coiffeur_cooldowns = { }
+coiffeur_score = { }
 
 @client.event
 async def on_scheduled_event_create(event):
@@ -29,6 +33,37 @@ async def on_scheduled_event_update(event, user):
 async def on_schedule_event_delete(event):
   await notificationEventDelete(event)
 
+@client.event
+async def on_message(message):
+  await coiffeurCheck(message)
+
+# ---
+
+async def coiffeurCheck(message):
+  coiffeurDone = ("feur" in message.content.lower()) and (message.reference is not None) and ("quoi" in message.reference.content.lower())
+  coiffeurAvailable = (coiffeur_cooldowns[message.author.id] is None) or (coiffeur_cooldowns[message.author.id] + timedelta(hours = 1) < datetime.now())
+
+  print("Coiffeur done = " + coiffeurDone)
+  print("Coiffeur available = " + coiffeurAvailable)
+
+  if (coiffeurDone and coiffeurAvailable) {
+    score = 0
+    if (coiffeur_score[message.author.id] is not None) {
+      score = coiffeur_score[message.author.id]
+    }
+
+    print("Current score for " + message.author.display_name + " : " + score);
+
+    score = score + 1
+    
+    print("New score for " + message.author.display_name + " : " + score);
+
+    coiffeur_score[message.author.id] = score
+    message.add_reaction(guild.get_emoji(coiffeur_emoji))
+    coiffeur_cooldowns[message.author.id] = datetime.now()
+
+    print("Cooldown set to " + datetime.now())
+  }
 # ---
 
 async def notificationEventCreate(event):
