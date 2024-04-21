@@ -19,6 +19,8 @@ coiffeur_emoji = 1231603611864137768
 
 event_notifications = { }
 
+last_point = datetime.now()
+
 coiffeur_cooldowns = { }
 coiffeur_score = { }
 
@@ -41,22 +43,21 @@ async def on_message(message):
 # ---
 
 async def coiffeurCheck(attackerMessage):
+  global last_point
   if (attackerMessage.reference is not None):
-
     guild = client.get_guild(attackerMessage.reference.guild_id)
     if (guild is not None):
-
       channel = guild.get_channel(attackerMessage.reference.channel_id)
       if (channel is not None and type(channel) == discord.channel.TextChannel):
-
         victimMessage = await channel.fetch_message(attackerMessage.reference.message_id)
         coiffeurDone = ("feur" in attackerMessage.content.lower()) and ("quoi" in victimMessage.content.lower())
         coiffeurAvailable = (attackerMessage.author.id not in coiffeur_cooldowns) or (coiffeur_cooldowns[attackerMessage.author.id] + timedelta(hours = 1) < datetime.now())
+        globallyAvailable = last_point + timedelta(minutes = 30) < datetime.now()
 
         print("Coiffeur done = " + str(coiffeurDone))
         print("Coiffeur available = " + str(coiffeurAvailable))
 
-        if (coiffeurDone and coiffeurAvailable):
+        if (coiffeurDone and coiffeurAvailable and globallyAvailable):
           score = 0
           if (attackerMessage.author.id in coiffeur_score):
             score = coiffeur_score[attackerMessage.author.id]
@@ -69,6 +70,7 @@ async def coiffeurCheck(attackerMessage):
 
           coiffeur_score[attackerMessage.author.id] = score
           coiffeur_cooldowns[attackerMessage.author.id] = datetime.now()
+          last_point = datetime.now()
 
           guild = client.get_guild(guild_id)
           if (guild is not None):
