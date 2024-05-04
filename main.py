@@ -27,10 +27,6 @@ async def on_scheduled_event_create(event):
   await notificationEventCreate(event)
 
 @client.event
-async def on_scheduled_event_update(event, user):
-  await notificationEventUpdate(event, user)
-
-@client.event
 async def on_schedule_event_delete(event):
   await notificationEventDelete(event)
 
@@ -87,23 +83,6 @@ async def notificationEventCreate(event):
       response = generateEventSummaryResponse(event)
       event_notifications[event.id] = await event_channel.send(content = response[0], embed = response[1])
       await event_channel.create_thread(name = event.creator.display_name + " - " + event.name, message = event_notifications[event.id], auto_archive_duration = 1440, type = None, reason = "Fil d'événement créé par le bot.", invitable = True, slowmode_delay = None)
-
-# ---
-
-async def notificationEventUpdate(event, user):
-  guild = client.get_guild(guild_id)
-
-  if guild is not None:
-    event_channel = guild.get_channel(event_channel_id)
-
-    if type(event_channel) == discord.channel.TextChannel:
-      response = generateEventSummaryResponse(event)
-
-      if event.id in event_notifications :
-        event_notifications[event.id] = await event_channel.send(content = response[0], embed = response[1])
-      else :
-        event_notifications[event.id] = await event_notifications[event.id].edit(content = response[0], embed = response[1], suppress = False)
-
 
 # ---
 
