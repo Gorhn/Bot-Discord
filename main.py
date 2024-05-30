@@ -42,10 +42,10 @@ async def on_member_join(member):
 # ---
 
 async def creationDateCheck(member):
-  if (member.created_at > datetime.now() - timedelta(weeks = 4)):
-    guild = client.get_guild(guild_id)
-    gown = guild.fetch_member(gown_id)
-    gown.send(content = "Warning : The member " + member.display_name + " (" + member.id + ") has less than 1 month since account creation.")
+  if (member.created_at > datetime.now(member.created_at.tzinfo) - timedelta(weeks = 4)):
+    guild = client.get_guild(guild_id) 
+    gown = await guild.fetch_member(gown_id)
+    await gown.send("Warning : The member " + member.display_name + " (<@" + str(member.id) + ">) has less than 1 month since account creation.")
 
 # ---
 
