@@ -12,6 +12,7 @@ intents.guild_scheduled_events = True
 
 client = discord.Client(intents=intents)
 
+gown_id = 115486361833701383
 guild_id = 1046389103266107404
 event_channel_id = 1228670607789395978
 event_role_id = 1228266794503114805
@@ -33,6 +34,18 @@ async def on_schedule_event_delete(event):
 @client.event
 async def on_message(message):
   await coiffeurCheck(message)
+
+@client.event
+async def on_member_join(member):
+  await creationDateCheck(member)
+
+# ---
+
+async def creationDateCheck(member):
+  if (member.created_at > datetime.now() - timedelta(weeks = 4)):
+    guild = client.get_guild(guild_id)
+    gown = guild.fetch_member(gown_id)
+    gown.send(content = "Warning : The member " + member.display_name + " (" + member.id + ") has less than 1 month since account creation.")
 
 # ---
 
