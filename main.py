@@ -1,6 +1,7 @@
 import discord
 import locale
 import time
+import os
 from datetime import timedelta, datetime
 from keep_alive import keep_alive
 
@@ -163,4 +164,5 @@ def generateEventSummaryResponse(event):
 
 keep_alive()
 
-client.run('MTIyODY2NDQ1MTcyMTMzNDg3NA.GX-scm.eBF2jv7qXe1ODdeB-CQT0COVhNntaA-ULNiXEg')
+discordToken = os.environ.get('DISCORD_TOKEN')
+client.run(discordToken)
