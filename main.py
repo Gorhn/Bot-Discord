@@ -18,6 +18,8 @@ guild_id = 1046389103266107404
 event_channel_id = 1228670607789395978
 event_role_id = 1228266794503114805
 coiffeur_emoji = 1231603611864137768
+alert_channel_id = 1281997106978095164
+alert_role_id = 1282000126784700559
 
 event_notifications = { }
 
@@ -45,8 +47,8 @@ async def on_member_join(member):
 async def creationDateCheck(member):
   if (member.created_at > datetime.now(member.created_at.tzinfo) - timedelta(weeks = 4)):
     guild = client.get_guild(guild_id) 
-    gown = await guild.fetch_member(gown_id)
-    await gown.send("Warning : The member " + member.display_name + " (<@" + str(member.id) + ">) has less than 1 month since account creation.")
+    channel = guild.get_channel(alert_channel_id)
+    await channel.send(content = "<@&" + str(alert_role_id) + "> - [Compte Suspect] : L'utilisateur " + member.display_name + " (<@" + str(member.id) + ">) a été créé il y a moins d'un mois.")
 
 # ---
 
